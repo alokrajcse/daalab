@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_NODES 20
+
+int G[MAX_NODES][MAX_NODES];
+int pi[MAX_NODES];
+int color[MAX_NODES];
+int d[MAX_NODES];
+int Q[MAX_NODES];
+int path[MAX_NODES][MAX_NODES];
+int front = -1, rear = -1;
+
+void enqueue(int Q[], int vertex)
+{
+    if (rear == MAX_NODES - 1)
+        printf("Queue Overflow\n");
+    else
+    {
+        if (front == -1)
+            front = 0;
+        rear = rear + 1;
+        Q[rear] = vertex;
+    }
+}
+
+int dequeue(int Q[])
+{
+    int item;
+    if (front == -1 || front > rear)
+    {
+        printf("Queue Underflow\n");
+        exit(1);
+    }
+    item = Q[front];
+    front = front + 1;
+    return item;
+}
+
+int isEmpty(int Q[])
+{
+    if (front == -1 || front > rear)
+        return 1;
+    else
+        return 0;
+}
+
+void printPath(int start, int end)
+{
+    if (start == end)
+        printf("%d ", start);
+    else if (pi[end] == -1)
+        printf("No path from %d to %d", start, end);
+    else
+    {
+        printPath(start, pi[end]);
+        printf("%d ", end);
+    }
+}
+
+void BFS(int G[MAX_NODES][MAX_NODES], int nodes, int s)
+{
+    int u, v;
+    for (int i = 1; i <= nodes; i++)
+    {
+        color[i] = 0;
+        pi[i] = -1;
+        d[i] = -1;
+    }
+    color[s] = 1;
+    d[s] = 0;
+    enqueue(Q, s);
+    while (!isEmpty(Q))
+    {
+        u = dequeue(Q);
+        for (v = 1; v <= nodes; v++)
+        {
+            if (G[u][v] == 1 && color[v] == 0)
+            {
+                color[v] = 1;
+                pi[v] = u;
+                d[v] = d[u] + 1;
+                enqueue(Q, v);
+            }
+        }
+        color[u] = 2;
+    }
+
+    for (int i = 1; i <= nodes; i++)
+    {
+        int current = i;
+        int j = 0;
+        while (current != -1)
+        {
+            path[i][j] = current;
+            current = pi[current];
+            j++;
+        }
+        path[i][j] = -1;
+    }
+}
+
+int main()
+{
+    int nodes, s;
+    printf("Enter the number of vertices: ");
+    scanf("%d", &nodes);
+    printf("Enter the source vertex: ");
+    scanf("%d", &s);
+    printf("Enter the adjacency matrix:\n");
+    for (int i = 1; i <= nodes; i++)
+    {
+        for (int j = 1; j <= nodes; j++)
+        {
+            scanf("%d", &G[i][j]);
+        }
+    }
+    BFS(G, nodes, s);
+    for (int i = 1; i <= nodes; i++)
+    {
+        printf("Vertex %d: Distance=%d, Path=", i, d[i]);
+        printPath(s, i);
+        printf("\n");
+    }
+    return 0;
+}

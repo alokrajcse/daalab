@@ -1,0 +1,35 @@
+#include <stdio.h>
+
+// Function prototype
+int recursiveLinearSearch(int arr[], int size, int target, int index);
+
+int main() {
+    int arr[] = {2, 4, 6, 8, 10, 12, 14, 16, 18, 20};
+    int target = 10;
+    int size = sizeof(arr) / sizeof(arr[0]);
+    
+    // Start the search from the first index
+    int result = recursiveLinearSearch(arr, size, target, 0);
+    
+    if (result != -1) {
+        printf("Element found at index %d\n", result);
+    } else {
+        printf("Element not found in the array\n");
+    }
+    
+    return 0;
+}
+
+// Recursive function to perform linear search
+int recursiveLinearSearch(int arr[], int size, int target, int index) {
+    // Base case: if index reaches size, target is not in the array
+    if (index == size) {
+        return -1;
+    }
+    // If the current element is the target, return the index
+    if (arr[index] == target) {
+        return index;
+    }
+    // Move to the next index
+    return recursiveLinearSearch(arr, size, target, index + 1);
+}
